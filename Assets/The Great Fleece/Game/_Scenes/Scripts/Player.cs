@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class Player : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Player : MonoBehaviour
     private bool _hasThrown;
     private GuardAI _gaurdHandle;
     public Vector3 coinTarget;
+    
 
     [SerializeField]private NavMeshAgent[] _guardCollection;
 
@@ -54,6 +56,7 @@ public class Player : MonoBehaviour
                 coinTarget = hitInfo.point;
                 SendAIToCoinSpot(hitInfo.point);
                 _animator.SetTrigger("Throw");
+                SpawnManager.Instance.StartSpawning();
             }
         }
     }
@@ -70,5 +73,15 @@ public class Player : MonoBehaviour
             currentAgent.SetDestination(coinPos);
             currentGuard.coinTossed = true;          
         }
+    }
+    public void StopPlayer()
+    {
+        _agent.enabled = false;
+        StartCoroutine("RestartPlayer");
+    }
+    private  IEnumerator RestartPlayer()
+    {     
+        yield return new WaitForSeconds(5);
+        _agent.enabled = true;
     }
 }
